@@ -187,8 +187,7 @@
  *
  * Compat status: Very dated, easy to simulate, and gross.
  */
-//#define NO_LIGHT
-#undef NO_LIGHT
+#define NO_LIGHT
 
 /* NO_ADD_ACTION: define this to remove add_action, commands, livings, etc.
  * process_input() then becomes the only way to deal with player input.
@@ -601,7 +600,7 @@
  *   maintenance by the driver.  These mudlib stats are more domain
  *   based than user based, and replaces the traditional wiz_list stats.
  */
-#define PACKAGE_MUDLIB_STATS
+#undef PACKAGE_MUDLIB_STATS
 
 /* PACKAGE_SOCKETS: define this to enable the socket efunctions.  This
  *   causes HAS_SOCKETS to be defined for all LPC objects.
@@ -647,8 +646,7 @@
  * databases
  */
 #ifdef PACKAGE_DB
-#undef USE_MYSQL
-#undef DEFAULT_DB
+#undef USE_MSQL
 #define USE_MYSQL 2
 #define DEFAULT_DB USE_MYSQL    /* default database */
 #define INCL_MYSQL_MYSQL_H
@@ -684,7 +682,6 @@
  *   the equivalent of seteuid(getuid(this_object())).  undef AUTO_SETEUID
  *   if you would rather have the euid of the created object be set to 0.
  */
-#undef AUTO_SETEUID
 #define AUTO_SETEUID
 
 /* AUTO_TRUST_BACKBONE: define this if you want objects with the backbone
@@ -737,8 +734,12 @@
  *   comm.c's add_message(). Instead of blindly making this value larger,
  *   your mudlib should be coded to not send huge strings to users.
  */
-#undef LARGEST_PRINTABLE_STRING
-#define LARGEST_PRINTABLE_STRING 65536
+#define LARGEST_PRINTABLE_STRING 8192
+
+/* MESSAGE_BUFFER_SIZE: determines the size of the buffer for output that
+ *   is sent to users.
+ */
+#define MESSAGE_BUFFER_SIZE 16384
 
 /* APPLY_CACHE_BITS: defines the number of bits to use in the call_other cache
  *   (in interpret.c).
@@ -796,6 +797,12 @@
  */
 #undef SERVER_IP
 
+/* Some maximum string sizes
+ */
+#define SMALL_STRING_SIZE     100
+#define LARGE_STRING_SIZE     1000
+#define COMMAND_BUF_SIZE      2000
+
 /* Number of levels of nested datastructures allowed -- this limit prevents
  * crashes from occuring when saving objects containing variables containing
  * recursive datastructures (with circular references).
@@ -806,22 +813,18 @@
  * config file.
  */
 /* MAX_LOCAL: maximum number of local variables allowed per LPC function */
-#undef CFG_MAX_LOCAL_VARIABLES
 #define CFG_MAX_LOCAL_VARIABLES         64
 
 /* CFG_MAX_GLOBAL_VARIABLES: This value determines the maximum number of
  *   global variables per object.  The maximum value is 65536.  There is
  *   a marginal memory increase for a value over 256.
  */
-#undef CFG_MAX_GLOBAL_VARIABLES
 #define CFG_MAX_GLOBAL_VARIABLES        256
 
-#undef CFG_EVALUATOR_STACK_SIZE
 #define CFG_EVALUATOR_STACK_SIZE        3000
 #define CFG_COMPILER_STACK_SIZE         600
 #define CFG_MAX_CALL_DEPTH              150
 /* This must be one of 4, 16, 64, 256, 1024, 4096 */
-#undef CFG_LIVING_HASH_SIZE
 #define CFG_LIVING_HASH_SIZE            1024
 
 /* NEXT_MALLOC_DEBUG: define this if using a NeXT and you want to enable
@@ -865,7 +868,6 @@
 /* PACKAGE_COMPRESS: Enable MCCP support and compressed save files
    SAVE_GZ_EXTENSION: save extension for compressed files
  */
-#undef HAVE_ZLIB
 #define HAVE_ZLIB
 #define PACKAGE_COMPRESS
 #define SAVE_GZ_EXTENSION ".o.gz"
@@ -887,7 +889,8 @@
 /* USE_ICONV: Use iconv to translate input and output from/to the users char
  * encoding
  */
-#define USE_ICONV
+#define USE_ICONV "GBK"
+#undef USE_ICONV_UTF8
 
 /* WOMBLES: don't allow spaces between start/end of array/mapping/functional token chars so ({1,2,3}) still works, but ( { 1 , 2 , 3 } ) doesn't and ({ 1 , 2 , 3 }) does.*/
 #undef WOMBLES
@@ -978,19 +981,3 @@
 #define STRUCT_STRUCT
 #endif
 
-/****************************************************************************
- *                              COMPAT                                      *
- ****************************************************************************/
-#undef ED_USE_TABS
-#define ED_TAB_WIDTH 8
-
-/****************************************************************************
- *                           MISCELLANEOUS                                  *
- ****************************************************************************/
-//#define DEFAULT_PRAGMAS PRAGMA_WARNINGS + PRAGMA_SAVE_TYPES + PRAGMA_ERROR_CONTEXT + PRAGMA_OPTIMIZE
-
-/****************************************************************************
- *                              PACKAGES                                    *
- ****************************************************************************/
-
-// PACKAGES are moved to CMAKE, please don't try to add #define PACKAGE_* here.

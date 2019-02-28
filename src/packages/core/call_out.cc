@@ -15,6 +15,9 @@
  * This file implements delayed calls of functions.
  */
 
+/* by Lonely. */
+unsigned int heartbeat_interval = HEARTBEAT_INTERVAL;
+
 // main callout map, for fastest reference
 typedef std::unordered_map<LPC_INT, pending_call_t *> CalloutHandleMapType;
 static CalloutHandleMapType g_callout_handle_map;
