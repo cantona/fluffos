@@ -6,11 +6,11 @@ extern char *outp;
 #include "compiler.h"
 #include "lex.h"
 #include "scratchpad.h"
-
 #include "lpc_incl.h"
 #include "simul_efun.h"
 #include "generate.h"
 #include "master.h"
+#include <stdint.h>
 
 /* gross. Necessary? - Beek */
 #ifdef WIN32

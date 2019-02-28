@@ -44,6 +44,9 @@ static void free_call (pending_call_t *);
 static void free_called_call (pending_call_t *);
 void remove_all_call_out (object_t *);
 
+/* by Lonely. */
+unsigned int heartbeat_interval = HEARTBEAT_INTERVAL;
+
 /*
  * Free a call out structure.
  */
@@ -285,7 +288,8 @@ void call_out()
 			current_time++;
 			DBG(("   current_time = %ld", current_time));
 #ifndef POSIX_TIMERS
-			if(!(current_time%HEARTBEAT_INTERVAL))
+			if (heartbeat_interval > 0 && !(current_time % heartbeat_interval))   // by Lonely.
+//			if(!(current_time%HEARTBEAT_INTERVAL))
 				call_heart_beat();
 #endif
 		} else {

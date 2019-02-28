@@ -23,7 +23,7 @@ fi
 
 # If this is uncommented, the specified 'make' is used instead of looking for
 # one 
-#MAKE=make
+MAKE=make
 
 # define this to be where you want the temporary compiled files to go
 # (only used with GNU make)
@@ -76,7 +76,7 @@ INSTALL_DIR="../bin"
 # Uncomment one or none of the following optimization lines.
 #
 # -O is usually a safe level of optimization for most compilers
-#OPTIMIZE="-O"
+OPTIMIZE="-O3"
 # high optimization for gcc:
 #OPTIMIZE="-O2 -fstrength-reduce"
 # uncomment below for RS/6000(AIX) xlc compiler only.

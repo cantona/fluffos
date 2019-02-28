@@ -61,11 +61,10 @@
  *   * fixes realloc by always doing a malloc/memcpy/free instead, try this
  *   * if you use more memory than expected (or MALLOC64 on a 64bit system).
  */
-#define SYSMALLOC
+#undef SYSMALLOC
 #undef MMALLOC
-#undef MALLOC64
+#define MALLOC64
 #undef MALLOC32
-#undef GCMALLOC /* needs -lgc in system_libs */
 /* You may optionally choose one (or none) of these malloc wrappers.  These
  * can be used in conjunction with any of the above malloc packages.
  *
@@ -163,7 +162,7 @@
  * are ever stripped.  So the example above gives
  * ({ "", "", "x", "y", "", "z", "", "" }).
  */
-#undef SANE_EXPLODE_STRING
+#define SANE_EXPLODE_STRING
 #undef REVERSIBLE_EXPLODE_STRING
 
 /* CAST_CALL_OTHERS: define this if you want to require casting of call_other's;
@@ -196,7 +195,7 @@
  * Compat status: next to impossible to simulate, hard to replace, and
  * very, very widely used.
  */
-#define NO_ADD_ACTION
+#undef NO_ADD_ACTION
 
 /* NO_SNOOP: disables the snoop() efun and all related functionality.
  */
@@ -222,7 +221,7 @@
  *
  * Compat status: easy to simulate and dated.
  */
-#define NO_WIZARDS
+#undef NO_WIZARDS
 
 /* OLD_TYPE_BEHAVIOR: reintroduces a bug in type-checking that effectively
  * renders compile time type checking useless.  For backwards compatibility.
@@ -242,11 +241,6 @@
  * trivial, and cannot be simulated.
  */
 #undef OLD_RANGE_BEHAVIOR
-
-/* define to get a warning for code that might use the old range behavior
- * when you're not actually using the old range behavior*/
-#undef WARN_OLD_RANGE_BEHAVIOR
-
 
 /* OLD_ED: ed() efun backwards compatible with the old version.  The new
  * version requires/allows a mudlib front end.
@@ -292,7 +286,7 @@
  * of the operating system's.  It has the advantage of giving the same value
  * on all architectures, and being stronger than the standard UNIX crypt().
  */
-#undef CUSTOM_CRYPT
+#define CUSTOM_CRYPT
 
 /*
  * Some minor tweaks that make it a bit easier to run code designed to run
@@ -317,7 +311,6 @@
  * Similarly for arrays ...
  */
 #define ARRAY_STATS
-#define CLASS_STATS
 /* LOG_CATCHES: define this to cause errors that are catch()'d to be
  *   sent to the debug log anyway.
  *
@@ -368,7 +361,7 @@
  *   config files by default.  If you don't wish to use this define, you may
  *   always specify a full path to the config file when starting the driver.
  */
-#define CONFIG_FILE_DIR "/home/atuin/bin"
+#define CONFIG_FILE_DIR "/home/lonely/bin"
 
 /* DEFAULT_PRAGMAS:  This should be a sum of pragmas you want to always
  * be on, i.e.
@@ -392,11 +385,12 @@
  *                      calls to functions in this object by objects that
  *                      inherit it.
  * PRAGMA_OPTIMIZE:     make a second pass over the generated code to
- *                      optimize it further.  Currently maybe broken.
+ *                      optimize it further.  Currently does jump threading.
  * PRAGMA_ERROR_CONTEXT:include some text telling where on the line a
  *                      compilation error occured.
  */
-#define DEFAULT_PRAGMAS PRAGMA_WARNINGS + PRAGMA_STRICT_TYPES + PRAGMA_ERROR_CONTEXT
+/*#define DEFAULT_PRAGMAS PRAGMA_WARNINGS + PRAGMA_STRICT_TYPES + PRAGMA_ERROR_CONTEXT*/
+#define DEFAULT_PRAGMAS 0
 
 /* supress warnings about unused arguments; only warn about unused local
  * variables.  Makes older code (where argument names were required) compile
@@ -539,7 +533,7 @@
  *   resolution is 1/60 of a second, then any time less than approxmately 15k
  *   microseconds will resolve to zero (0).
  */
-#undef PROFILE_FUNCTIONS
+#define PROFILE_FUNCTIONS
 
 /* NO_BUFFER_TYPE: if this is #define'd then LPC code using the 'buffer'
  *   type won't be allowed to compile (since the 'buffer' type won't be
@@ -554,7 +548,7 @@
  *
  * A side effect is that 'array' cannot be a variable or function name.
  */
-#undef ARRAY_RESERVED_WORD
+#define ARRAY_RESERVED_WORD
 
 /* REF_RESERVED_WORD: If this is defined then the word 'ref' can be
  *   used to pass arguments to functions by value.  Example:
@@ -627,8 +621,25 @@
 #define NUM_EXTERNAL_CMDS 100
 #endif
 
+/* PACKAGE_CHINESE: Better chinese handling supported */
+#define PACKAGE_CHINESE
+
+/* PACKAGE_DATABASE: Much efficient database access */
+#define PACKAGE_DATABASE
+
+#define PACKAGE_MAPPINGBASE
+
+/* PACKAGE_ARITH_OPERATOR: Unlimit arithmetic operator efun */
+#define PACKAGE_ARITH_OPERATOR
+
+/* PACKAGE_ANSI: Ansi string handle */
+#define PACKAGE_ANSI
+
+/* PACKAGE_LONELY: The other efun */
+#define PACKAGE_LONELY
+
 /* PACKAGE_DB: efuns for external database access using msql */
-#undef PACKAGE_DB
+#define PACKAGE_DB
 
 /* If PACKAGE_DB is defined above, you must pick ONE of the following supported
  * databases
@@ -636,6 +647,9 @@
 #ifdef PACKAGE_DB
 #undef USE_MSQL
 #define USE_MYSQL 2
+#define DEFAULT_DB USE_MYSQL	/* default database */
+#define INCL_MYSQL_MYSQL_H
+#define MYSQL_SOCKET_ADDRESS    "/var/lib/mysql/mysql.sock"
 #undef USE_POSTGRES
 #endif
 
@@ -661,7 +675,7 @@
 /*PACKAGE DWLIB: some discworld mudlib simuls coded in C (well just one right
   now) */
 
-#define PACKAGE_DWLIB
+#undef PACKAGE_DWLIB
 
 /* AUTO_SETEUID: when an object is created it's euid is automatically set to
  *   the equivalent of seteuid(getuid(this_object())).  undef AUTO_SETEUID
@@ -673,7 +687,7 @@
  *   uid to automatically be trusted and to have their euid set to the uid of
  *   the object that forced the object's creation.
  */
-#undef AUTO_TRUST_BACKBONE
+#define AUTO_TRUST_BACKBONE
 
 /*************************************************************************
  *                       FOR EXPERIENCED USERS                           *
@@ -694,7 +708,15 @@
  */
 #undef USE_32BIT_ADDRESSES
 
-/* HEARTBEAT_INTERVAL: define heartbeat interval in seconds.
+/* HEARTBEAT_INTERVAL: define heartbeat interval in microseconds (us).
+ *   1,000,000 us = 1 second.  The value of this macro specifies
+ *   the frequency with which the heart_beat method will be called in
+ *   those LPC objects which have called set_heart_beat(1).
+ *
+ * [NOTE: if ualarm() isn't available, alarm() is used instead.  Since
+ *  alarm() requires its argument in units of a second, we map 1 - 1,000,000 us
+ *  to an actual interval of one (1) second and 1,000,001 - 2,000,000 maps to
+ *  an actual interval of two (2) seconds, etc.]
  */
 #define HEARTBEAT_INTERVAL 1
 
@@ -716,7 +738,7 @@
 /* MESSAGE_BUFFER_SIZE: determines the size of the buffer for output that
  *   is sent to users.
  */
-#define MESSAGE_BUFFER_SIZE 4096
+#define MESSAGE_BUFFER_SIZE 16384
 
 /* APPLY_CACHE_BITS: defines the number of bits to use in the call_other cache
  *   (in interpret.c).
@@ -742,7 +764,7 @@
 /* TRACE: define this to enable the trace() and traceprefix() efuns.
  *   (keeping this undefined will cause the driver to run faster).
  */
-#define TRACE
+#undef TRACE
 
 /* RUNTIME_LOADING: On systems which support it, it allows LPC->C compilation
  * 'on the fly' without having to recompile the driver.
@@ -764,7 +786,7 @@
  * a small one wastes more CPU reallocating when it needs to grow.  Default
  * to a medium value.
  */
-#define HEART_BEAT_CHUNK      32
+#define HEART_BEAT_CHUNK      64
 
 /* SERVER_IP: For machines with multiple IP addresses, this specifies which
  * one to use.  This is useful for IP accounting and is necessary to be
@@ -790,19 +812,19 @@
  * config file.
  */
 /* MAX_LOCAL: maximum number of local variables allowed per LPC function */
-#define CFG_MAX_LOCAL_VARIABLES         50
+#define CFG_MAX_LOCAL_VARIABLES         64
 
 /* CFG_MAX_GLOBAL_VARIABLES: This value determines the maximum number of
  *   global variables per object.  The maximum value is 65536.  There is
  *   a marginal memory increase for a value over 256.
  */
-#define CFG_MAX_GLOBAL_VARIABLES        65536
+#define CFG_MAX_GLOBAL_VARIABLES        256
 
 #define CFG_EVALUATOR_STACK_SIZE        3000
 #define CFG_COMPILER_STACK_SIZE         600
 #define CFG_MAX_CALL_DEPTH              150
 /* This must be one of 4, 16, 64, 256, 1024, 4096 */
-#define CFG_LIVING_HASH_SIZE            256
+#define CFG_LIVING_HASH_SIZE            1024
 
 /* NEXT_MALLOC_DEBUG: define this if using a NeXT and you want to enable
  *   the malloc_check() and/or malloc_debug() efuns.  Run the 'man malloc_debug'
@@ -829,7 +851,7 @@
  * [NOTE: malloc_debug(6) is a good compromise between efficiency and
  *  completeness of malloc debugging (malloc/free will be about half as fast).]
  */
-#define NEXT_MALLOC_DEBUG
+#undef NEXT_MALLOC_DEBUG
 
 
 /* GET_CHAR_IS_BUFFERED: Normally get_char() is unbuffered.  That is, once
@@ -861,23 +883,24 @@
  *   tabs for indenting. This options turns on a warning message for
  *   files indented with tabs instead of spaces.
  */
-#define WARN_TAB
+#undef WARN_TAB
 
 /* USE_ICONV: Use iconv to translate input and output from/to the users char
  * encoding
  */
-#define USE_ICONV
+#undef USE_ICONV
+#undef USE_ICONV_UTF8
 
 /* WOMBLES: don't allow spaces between start/end of array/mapping/functional token chars so ({1,2,3}) still works, but ( { 1 , 2 , 3 } ) doesn't and ({ 1 , 2 , 3 }) does.*/
-#define WOMBLES
+#undef WOMBLES
 
 /* ALLOW_INHERIT_AFTER_FUNCTION: allow inheriting after functions have been defined (this includes prototypes). This caused crashes in v22.2a but it may have been fixed since */
-#undef ALLOW_INHERIT_AFTER_FUNCTION
+#define ALLOW_INHERIT_AFTER_FUNCTION
 
 /*PACKAGE_ASYNC: adds some efuns for asyncronous IO */
 #define PACKAGE_ASYNC
 
-/*PACKAGE_SHA1: adds a function to calculate the sha1 hash of a string sha1(string).  Use PACKAGE_CRYPTO instead if possible. */
+/*PACKAGE_SHA1: adds a function to calculate the sha1 hash of a string sha1(string)*/
 #undef PACKAGE_SHA1
 
 /*PACKAGE_CRYPTO: adds a function that does multiple hash types hash(hash, string), needs openssl lib and includes and -lssl in system_libs*/
@@ -886,7 +909,7 @@
 /* PROG_REF_TYPE size of program ref counter:
  * char for 8 bit, short for 16, int for 32,
  * long long for 64 (completely useless on 32 bit machines though!) */
-#define PROG_REF_TYPE short
+#define PROG_REF_TYPE int
 
 /* HAS_CONSOLE: If defined, the driver can take the argument -C
  *   which will give the driver an interactive console (you can type
@@ -898,9 +921,54 @@
  */
 #define HAS_CONSOLE
 
-/* IPV6: Use IP version 6 instead of 4, for most people the only difference 
+/* IPV6: Use IP version 6 instead of 4, for most people the only difference
  * will be that numerical IP addresses get ::ffff: added in front.*/
-#define IPV6
+#undef IPV6
+
+/*
+ * moon包添加以下函數
+ * milli_clock - 取系統毫秒及時間、從啟動開始連線
+ * luan - 後台輸出函數用于調試使用
+ * MD5 - 單向加密函數，用于登錄連線
+ */
+#define PACKAGE_MOON
+/*
+ * 將 select 模式修改為 epoll 模式
+ * 不定義默認為 select 模式
+ */
+#undef EPOLL
+/* epoll 的參數設置 */
+#ifdef EPOLL
+/*
+ * epoll 檢測玩家緩沖區、是否有信息、及時清理數據
+ * 檢測時epoll的效率很低、1000人連線效率差十倍以上
+ * 效率測試：每人每秒一條命令、單向返回信息的命令、沒有廣播
+ * 不檢測玩家緩沖區、廣播信息可能保留在玩家緩存區、產生延時
+ * select - 1000人 檢測 msg_buf CPU 30%
+ * epoll  - 1000人 檢測 msg_buf CPU 50%
+ * epoll  - 1000人 不檢測 msg_buf CPU 4%
+ * epoll  - 4000人 不檢測 msg_buf CPU 16%
+ *
+ * 廣播消息666人每秒廣播1條消息666*666、
+ * CPU都在40-50%左右、差距不大
+ */
+#define EP_CHECK_BUF
+/* epoll 一次最大處理事件的數目 */
+#define EP_MAX_EVENT    256
+/* epoll 監聽時延、10毫秒沒有socket事件、跳出wait */
+#define EP_TIME_OUT     1
+/* 每多少此事件、flush一次數據 */
+#define EP_TICK_FLUSH   3
+/*
+ * 重新設置系統最大打開文件的數目
+ * new_user_handle、將預留10個句柄給其他程序
+ * 如、第一次load文件、編譯文件、update文件、輸出log
+ * read文件、數據庫句柄、lpc_socket、都需要系統分配句柄
+ */
+#define EP_MAX_CTL      4096
+#endif
+
+#define LONELY_IMPROVED
 
 /* static user space dtrace probes, try them if you have dtrace! */
 #undef DTRACE
@@ -914,4 +982,3 @@
 /* use POSIX timers for eval_cost */
 #define POSIX_TIMERS
 #endif
-

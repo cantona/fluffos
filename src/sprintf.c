@@ -560,10 +560,40 @@ INLINE_STATIC void add_nstr (const char * str, int len) {
 static void add_justified (const char * str, int slen, pad_info_t * pad,
                              int fs, format_info finfo, short int trailing)
 {
+
+   /* efun sprintf() 省略對 ansi 碼的字元數計算 by Lonely. */
+   const char *str_a;
 #ifdef USE_ICONV
     int skip = 0;
     int wide = 0;
     const char *p2 = str + slen;
+#endif
+
+#if 0
+  for (str_a = str; str_a - str < slen;)
+    {
+      if (*str_a == '\x1B')
+	{
+	  str_a++;
+	  fs += 2;
+
+	  if (*str_a++ == '[')
+	    {
+	      while (isdigit (*str_a) || *str_a == ';')
+		{
+		  str_a++;
+		  fs++;
+		}
+	      str_a++;
+	      fs++;
+	    }
+	  continue;
+	}
+      str_a++;
+    }
+#endif
+
+#ifdef USE_ICONV
     while (p2 > str){
     	if((*p2) & 0x80){
     		wide = 1;

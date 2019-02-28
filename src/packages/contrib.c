@@ -162,6 +162,8 @@ f_store_variable (void) {
 }
 #endif
 
+#if 0
+
 #ifdef F_FETCH_VARIABLE
 void
 f_fetch_variable (void) {
@@ -176,6 +178,36 @@ f_fetch_variable (void) {
 	free_string_svalue(sp--);
 	push_svalue(sv);
 }
+#endif
+#else
+// by Lonely
+#ifdef F_FETCH_VARIABLE
+void
+f_fetch_variable (void) {
+    int idx;
+    object_t *ob;
+    svalue_t *sv;
+    unsigned short type;
+
+    if( st_num_arg==2 ) {
+        ob=sp->u.ob;
+        pop_stack();
+    } else
+        ob= current_object;
+
+    idx = find_global_variable(ob->prog, sp->u.string, &type, 0);
+    
+    if (idx == -1 || type & DECL_PRIVATE ) {
+        free_string_svalue(sp--);
+        push_undefined();
+        return;
+    }
+    sv = &ob->variables[idx];
+
+    free_string_svalue(sp--);
+    push_svalue(sv);
+}
+#endif
 #endif
 
 /* Beek */

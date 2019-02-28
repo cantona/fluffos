@@ -3,6 +3,9 @@
 
 #include "lpc_incl.h"
 
+/* by Lonely. */
+extern unsigned int heartbeat_interval;
+
 /*
  * call_out.c
  */

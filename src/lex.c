@@ -31,6 +31,7 @@
 #include "main.h"
 #include "cc.h"
 #include "master.h"
+#include <stdint.h>
 
 #define NELEM(a) (sizeof (a) / sizeof((a)[0]))
 #define LEX_EOF ((unsigned char) EOF)
@@ -2145,6 +2146,7 @@ void add_predefines()
 
     add_predefine("MUDOS", -1, "");
     add_predefine("FLUFFOS", -1, "");
+    add_predefine("NTOS", -1, "");
 #ifdef WIN32
     add_predefine("__WIN32__", -1, "");
 #endif
@@ -2182,6 +2184,11 @@ void add_predefines()
     add_quoted_predefine("__ARCH__", ARCH);
     add_quoted_predefine("__COMPILER__", COMPILER);
     add_quoted_predefine("__OPTIMIZATION__", OPTIMIZE);
+
+/* Indicate the special version */
+#ifdef LONELY_IMPROVED
+  add_quoted_predefine ("LONELY_IMPROVED", "2.0");	// by Lonely.
+#endif
 
     /* Backwards Compat */
 #ifndef CDLIB

@@ -24,7 +24,11 @@ string upper_case(string);
 int replaceable(object, void | string *);
 mapping program_info(void | object);
 void store_variable(string, mixed);
+#if 0
 mixed fetch_variable(string);
+#else
+mixed fetch_variable(string, void | object); // by Lonely
+#endif
 int remove_interactive(object);
 int query_ip_port(void | object);
 string zonetime(string, int);

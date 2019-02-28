@@ -477,7 +477,14 @@ INLINE void int_free_svalue (svalue_t * v, const char * tag)
     if (v->type == T_OBJECT)
       debug(d_flag, ("Free_svalue %s (%d) from %s\n", v->u.ob->obname, v->u.ob->ref - 1, tag));
 #endif
-    if (!(--v->u.refed->ref)) {
+      // long-live data structure checking  - added by Lonely.
+      if (v->u.refed->ref != UINT_MAX)
+	--v->u.refed->ref;
+
+      // already decreased in the previous line - modified by Lonely.
+      // if (!(--v->u.refed->ref)) {
+      if (!(v->u.refed->ref)) {
+//    if (!(--v->u.refed->ref)) {
       switch (v->type) {
       case T_OBJECT:
         dealloc_object(v->u.ob, "free_svalue");
@@ -642,6 +649,8 @@ INLINE void assign_svalue_no_free (svalue_t * to, svalue_t * from)
       add_ref(from->u.ob, "assign_svalue_no_free");
     else
 #endif
+    // long-live data structure checking - added by Lonely.
+    if (from->u.refed->ref != UINT_MAX)
       from->u.refed->ref++;
   }
 }
@@ -785,6 +794,9 @@ INLINE void push_indexed_lvalue (int code)
     if (!code && (sp->type == T_MAPPING)) {
       if (!(lv = find_for_insert(sp->u.map, sp-1, 0)))
         mapping_too_large();
+
+  // long-live data structure checking - added by Lonely.
+  if (sp->u.map->ref != UINT_MAX)
       sp->u.map->ref--;
 #ifdef REF_RESERVED_WORD
       lv_owner_type = T_MAPPING;
@@ -4233,6 +4245,7 @@ int apply_low (const char * fun, object_t * ob, int num_arg)
        * object */
   } else {
     int findex, runtime_index, fio, vio;
+    short funp_free = 0;      // Added by Lonely.
     /* we have to search the function */
 
     if (entry->oprogp) {
@@ -4246,10 +4259,11 @@ int apply_low (const char * fun, object_t * ob, int num_arg)
       if (entry->funp){
         free_string((char *)entry->funp);
         entry->funp = 0;
+	funp_free = 1;
       }
     }
 #ifdef CACHE_STATS
-    if (!entry->funp) {
+    if (!entry->funp && funp_free != 1) {
       apply_low_slots_used++;
     } else {
       apply_low_collisions++;
