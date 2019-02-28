@@ -17,6 +17,10 @@
 #endif
 #endif
 
+
+/* by Lonely. */
+extern unsigned int heartbeat_interval;
+
 typedef struct pending_call_s {
   uint64_t target_time;
   union string_or_func function;
