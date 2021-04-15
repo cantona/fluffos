@@ -479,6 +479,7 @@ void f_query_temp()
 }
 #endif
 
+#if 0
 //
 // addn()
 //
@@ -656,6 +657,7 @@ void f_addn_temp()
 	free_string_svalue(sp--);
 	push_svalue(value);
 }
+#endif
 #endif
 
 //
