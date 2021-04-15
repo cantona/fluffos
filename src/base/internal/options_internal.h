@@ -96,7 +96,7 @@
 
 #define CFG_EVALUATOR_STACK_SIZE 65536
 #define CFG_COMPILER_STACK_SIZE 600
-#define CFG_MAX_CALL_DEPTH 150
+#define CFG_MAX_CALL_DEPTH 300
 
 /* USE_32BIT_ADDRESSES: Use 32 bits for addresses of function, instead of
  * the usual 16 bits.  This increases the maximum program size from 64k
